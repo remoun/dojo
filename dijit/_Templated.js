@@ -245,6 +245,17 @@ dojo.declare("dijit._Templated",
 			this.inherited(arguments);
 		},
 
+		resize: function() {
+			this.inherited(arguments);
+
+			if(!this.isLayoutContainer){
+				// Notify widgets in template of the resize.
+				dojo.forEach(this._supportingWidgets, function(w){
+					w && w.resize && w.resize();
+				});
+			}
+		},
+
 		destroyRendering: function(){
 			// Delete all attach points to prevent IE6 memory leaks.
 			dojo.forEach(this._attachPoints, function(point){
