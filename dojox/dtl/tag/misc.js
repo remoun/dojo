@@ -209,7 +209,7 @@ dojo.require("dojox.dtl._base");
 			return buffer;
 		},
 		unrender: function(context, buffer){
-			return buffer;
+			return this.nodelist.unrender(context, buffer);
 		},
 		clone: function(buffer){
 			return new this.constructor(this.target.getExpression(), this.alias, this.nodelist.clone(buffer));
