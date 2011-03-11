@@ -301,9 +301,11 @@ public class Compressor {
                  break;
              case Token.FUNCTION: {
                  ++i; // skip function type
-                 tm.incrementFunctionNumber();
                  primeInArgsList = true;
                  primeFunctionNesting = true;
+                 positionStack.push(new Integer(i));
+                 tm.incrementFunctionNumber();
+                 tm.enterNestingLevel(braceNesting++);
                  result.append("function");
                  if (Token.LP != getNext(encodedSource, length, i)) {
                      result.append(' ');
@@ -324,7 +326,12 @@ public class Compressor {
                  result.append(",");
                  break;
              case Token.LC:
-                 ++braceNesting;
+                 if (primeFunctionNesting) {
+                     primeFunctionNesting = false;
+                 } else {
+                     ++braceNesting;
+                 }
+
                  if (Token.EOL == getNext(encodedSource, length, i)){
                      indent += indentGap;
                  }
@@ -377,11 +384,6 @@ public class Compressor {
                  if(primeInArgsList){
                      inArgsList = true;
                      primeInArgsList = false;
-                 }
-                 if(primeFunctionNesting){
-                     positionStack.push(new Integer(i));
-                     tm.enterNestingLevel(braceNesting);
-                     primeFunctionNesting = false;
                  }
                  result.append('(');
                  break;
@@ -785,14 +787,20 @@ public class Compressor {
 				}
 				case Token.FUNCTION: {
 					++i; // skip function type
-					tm.incrementFunctionNumber();
 					primeInArgsList = true;
 					primeFunctionNesting = true;
+					positionStack.push(new Integer(i));
+					tm.incrementFunctionNumber();
+					tm.enterNestingLevel(braceNesting++);
 					functionPositionStack.push(new Integer(i-1));
 					break;
 				}
 				case Token.LC: {
-					++braceNesting;
+					if (primeFunctionNesting) {
+						primeFunctionNesting = false;
+					} else {
+						++braceNesting;
+					}
 					break;
 				}
 				case Token.RC: {
@@ -816,11 +824,6 @@ public class Compressor {
 					if (primeInArgsList) {
 						inArgsList = true;
 						primeInArgsList = false;
-					}
-					if (primeFunctionNesting) {
-						positionStack.push(new Integer(i));
-						tm.enterNestingLevel(braceNesting);
-						primeFunctionNesting = false;
 					}
 					break;
 				}
