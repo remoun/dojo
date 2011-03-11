@@ -238,28 +238,26 @@ public class TokenMapper {
 			boolean asQuotedString, StringBuffer sb, int prevToken,
 			boolean inArgsList, int currentLevel, ReplacedTokens replacedTokens) {
 
-		boolean hasNewMapping = false;
+		boolean hasNewMapping = inArgsList || (prevToken == Token.VAR);
 
-		int length = encodedSource.charAt(offset);
-		++offset;
+		boolean replace = (inArgsList || functionBracePositions.size() > 0 &&
+				currentLevel >= ((Integer) functionBracePositions.get(functionBracePositions.size() - 1)).intValue()) &&
+				prevToken != Token.DOT;
+
+		int length = encodedSource.charAt(offset++);
+
 		if ((0x8000 & length) != 0) {
-			length = ((0x7FFF & length) << 16) | encodedSource.charAt(offset);
-			++offset;
+			length = ((0x7FFF & length) << 16) | encodedSource.charAt(offset++);
 		}
+
 		String str = encodedSource.substring(offset, offset + length);
-		if ((prevToken == Token.VAR) || (inArgsList)) {
-			hasNewMapping = true;
-		}
+
 		if (sb != null) {
 			String sourceStr = new String(str);
 			
-			if (((functionBracePositions.size() > 0) && 
-				(currentLevel >= (((Integer) functionBracePositions.get(functionBracePositions.size() - 1)).intValue()))) || 
-				(inArgsList)) {
-				if (prevToken != Token.DOT) {
-					// Look for replacement token in provided lookup object.
-					str = replacedTokens.find(str);
-				}
+			if (replace) {
+				// Look for replacement token in provided lookup object.
+				str = replacedTokens.find(str);
 			}
 			if ((!inArgsList) && (asQuotedString)) {
 				if ((prevToken == Token.LC) || (prevToken == Token.COMMA)) {
@@ -274,13 +272,10 @@ public class TokenMapper {
 				sb.append('"');
 			}
 		}
-		else if (((functionBracePositions.size() > 0) && 
-				(currentLevel >= (((Integer) functionBracePositions.get(functionBracePositions.size() - 1)).intValue()))) || 
-				(inArgsList)) {
-			if (prevToken != Token.DOT) {
-				getMappedToken(str, hasNewMapping);
-			}
+		else if (replace) {
+			getMappedToken(str, hasNewMapping);
 		}
+
 		return offset + length;
 	}
 

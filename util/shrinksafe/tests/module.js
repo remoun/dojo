@@ -81,6 +81,17 @@ try{
 			
 		},
 		
+		function namedFunctions(t){
+			var src = shrinksafe.tests.module.loader("named_functions.js", "all");
+
+			t.assertTrue(src.original.length > src.compressed.length);
+
+			eval(src.compressed);
+			// make sure expected output occurs.
+			t.assertEqual("foobar42!ohyeah", result);
+			delete result;
+		},
+
 		function stripConsoleNormal(t){
 			var src = shrinksafe.tests.module.loader("stripconsole.js", "normal");
 
