@@ -145,6 +145,11 @@ dojo.require("dojo.parser");
 	},
 	{
 		render: function(context, buffer){
+			var _this = context.getThis();
+			if(!dojo.isArray(_this._supportingWidgets)){
+				_this._supportingWidgets = [];
+			}
+
 			if(this._parsed){
 				var _buffer = new dd.DomBuffer();
 				this._template.render(context, _buffer);
@@ -156,9 +161,18 @@ dojo.require("dojo.parser");
 				if(rendered != this._rendered){
 					this._rendered = rendered;
 					if(this._dijit){
+						var index = dojo.indexOf(_this._supportingWidgets, this._dijit);
+						if(index > -1){
+							_this._supportingWidgets.splice(index, 1);
+						}
 						this._dijit.destroyRecursive();
 					}
-					this._dijit = dojo.parser.instantiate([root])[0];
+					_this._supportingWidgets.push(this._dijit = dojo.parser.instantiate([root])[0]);
+				}
+			} else {
+				var index = dojo.indexOf(_this._supportingWidgets, this._dijit);
+				if(index < 0){
+					_this._supportingWidgets.push(this._dijit);
 				}
 			}
 
@@ -176,7 +190,17 @@ dojo.require("dojo.parser");
 			return buffer.concat(node);
 		},
 		unrender: function(context, buffer){
-			return buffer.remove(this._dijit.domNode);
+			if(this._dijit){
+				var _this = context.getThis();
+				if(_this._supportingWidgets){
+					var index = dojo.indexOf(_this._supportingWidgets, this._dijit);
+					if(index > -1){
+						_this._supportingWidgets.splice(index, 1);
+					}
+				}
+				return buffer.remove(this._dijit.domNode);
+			}
+			return buffer;
 		},
 		clone: function(){
 			return new this.constructor(this._node, this._parsed);
