@@ -49,6 +49,9 @@ dojo.mixin(dojox.dtl.utils.date, {
 		if(!(d instanceof Date)){
 			d = new Date(d.year, d.month, d.day);
 		}
+		if (isNaN(+d)) {
+			return "";
+		}
 		if(!now){
 			now = new Date();
 		}
