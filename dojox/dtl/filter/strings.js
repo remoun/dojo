@@ -22,6 +22,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 	},
 	addslashes: function(value){
 		// summary: Adds slashes - useful for passing strings to JavaScript, for example.
+		value = "" + value;
 		return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/'/g, "\\'");
 	},
 	capfirst: function(value){
@@ -52,6 +53,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 	_fix_ampersands: /&(?!(\w+|#\d+);)/g,
 	fix_ampersands: function(value){
 		// summary: Replaces ampersands with ``&amp;`` entities
+		value = "" + value;
 		return value.replace(dojox.dtl.filter.strings._fix_ampersands, "&amp;");
 	},
 	floatformat: function(value, arg){
@@ -77,6 +79,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 	},
 	linenumbers: function(value){
 		// summary: Displays text with line numbers
+		value = "" + value;
 		var df = dojox.dtl.filter;
 		var lines = value.split("\n");
 		var output = [];
@@ -132,6 +135,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 	slugify: function(value){
 		// summary: Converts to lowercase, removes
 		//		non-alpha chars and converts spaces to hyphens
+		value = "" + value;
 		value = value.replace(/[^\w\s-]/g, "").toLowerCase();
 		return value.replace(/[\-\s]+/g, "-");
 	},
@@ -150,6 +154,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 	},
 	title: function(value){
 		// summary: Converts a string into titlecase
+		value = "" + value;
 		var last, title = "";
 		for(var i = 0, current; i < value.length; i++){
 			current = value.charAt(i);
@@ -167,6 +172,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 		// summary: Truncates a string after a certain number of words
 		// arg: Integer
 		//		Number of words to truncate after
+		value = "" + value;
 		arg = parseInt(arg, 10);
 		if(!arg){
 			return value;
@@ -192,6 +198,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 	_truncate_tag: /<(\/)?([^ ]+?)(?: (\/)| .*?)?>/,
 	_truncate_singlets: { br: true, col: true, link: true, base: true, img: true, param: true, area: true, hr: true, input: true },
 	truncatewords_html: function(value, arg){
+		value = "" + value;
 		arg = parseInt(arg, 10);
 
 		if(arg <= 0){
@@ -242,7 +249,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 		return output;
 	},
 	upper: function(value){
-		return value.toUpperCase();
+		return (value + "").toUpperCase();
 	},
 	urlencode: function(value){
 		return dojox.dtl.filter.strings._urlquote(value);
@@ -253,6 +260,7 @@ dojo.mixin(dojox.dtl.filter.strings, {
 		return dojox.dtl.filter.strings.urlizetrunc(value);
 	},
 	urlizetrunc: function(value, arg){
+		value = "" + value;
 		arg = parseInt(arg);
 		return dojox.string.tokenize(value, /(\S+)/g, function(word){
 			var matches = dojox.dtl.filter.strings._urlize.exec(word);
@@ -287,11 +295,12 @@ dojo.mixin(dojox.dtl.filter.strings, {
 		}).join("");
 	},
 	wordcount: function(value){
-		value = dojo.trim(value);
+		value = dojo.trim(value + "");
 		if(!value){ return 0; }
 		return value.split(/\s+/g).length;
 	},
 	wordwrap: function(value, arg){
+		value = "" + value;
 		arg = parseInt(arg);
 		// summary: Wraps words at specified line length
 		var output = [];
