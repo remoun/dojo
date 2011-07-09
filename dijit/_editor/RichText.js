@@ -455,6 +455,15 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		var s = 'javascript:parent.' + dijit._scopeName + '.byId("'+this.id+'")._iframeSrc';
 		ifr.setAttribute('src', s);
 		this.editingArea.appendChild(ifr);
+		
+		if(dojo.isSafari <= 4){
+			var src = ifr.getAttribute("src");
+			if(!src || src.indexOf("javascript") == -1){ 
+				// Safari 4 and earlier sometimes act oddly
+				// So we have to set it again.
+				setTimeout(function(){ifr.setAttribute('src', s);},0);
+			}
+		}
 
 		// TODO: this is a guess at the default line-height, kinda works
 		if(dn.nodeName == "LI"){
