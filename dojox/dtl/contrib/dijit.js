@@ -13,11 +13,9 @@ dojo.require("dojo.parser");
 	},
 	{
 		render: function(context, buffer){
-			if(!this._rendered){
-				this._rendered = true;
-				for(var i=0, key; key = this._keys[i]; i++){
-					context.getThis()[key] = this._object || buffer.getParent();
-				}
+			this._rendered = true;
+			for(var i=0, key; key = this._keys[i]; i++){
+				context.getThis()[key] = this._object || buffer.getParent();
 			}
 			return buffer;
 		},
